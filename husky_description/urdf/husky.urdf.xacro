@@ -24,7 +24,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <robot name="husky_robot" xmlns:xacro="http://ros.org/wiki/xacro">
-
+  <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
   <!-- Included URDF/XACRO Files -->
   <xacro:include filename="$(find husky_description)/urdf/decorations.urdf.xacro" />
   <xacro:include filename="$(find husky_description)/urdf/wheel.urdf.xacro" />
@@ -49,16 +49,46 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- Wheel Properties -->
   <xacro:property name="wheel_length" value="0.1143" />
   <xacro:property name="wheel_radius" value="0.1651" />
+  <xacro:property name="height_offset" value="0.1" />
 
   <xacro:macro name="husky_robot">
-
     <!-- Base link is the center of the robot's bottom plate -->
     <link name="base_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
+        <origin xyz="0 0 ${height_offset}" rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://husky_description/meshes/base_link.dae" />
+          <!--mesh filename="package://husky_description/meshes/box3.dae" /-->
+          <!--box size="${base_x_size-0.2} ${base_y_size-0.1} ${base_z_size/2 + height_offset+0.1}"/-->
         </geometry>
+     	<material name="Cyan">
+       	  <color rgba="0.0 0.0 1.0 1.0"/>
+     	</material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${base_z_size/4}" rpy="0 0 0" />
+        <geometry>
+          <box size="${base_x_size*4/5} ${base_y_size} ${base_z_size/2}"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0 0 ${base_z_size*3/4}" rpy="0 0 0" />
+        <geometry>
+          <box size="${base_x_size*4/5} ${base_y_size} ${base_z_size/2}"/>
+        </geometry>
+      </collision>
+    </link>
+<!--
+    <! Base link is the center of the robot's bottom plate >
+    <link name="base_link">
+      <visual>
+        <origin xyz="0 0 ${height_offset}" rpy="0 0 0" />
+        <geometry>
+          <!mesh filename="package://husky_description/meshes/base_link.dae" />
+          <box size="${base_x_size-0.2} ${base_y_size-0.1} ${base_z_size/2 + height_offset}"/>
+        </geometry>
+     	<material name="Cyan">
+       	  <color rgba="0.5 0.8 1.0 0.0"/>
+     	</material>
       </visual>
       <collision>
         <origin xyz="0 0 ${base_z_size/4}" rpy="0 0 0" />
@@ -73,7 +103,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
         </geometry>
       </collision>
     </link>
-
+-->
     <!-- Base footprint is on the ground under the robot -->
     <link name="base_footprint"/>
 
@@ -86,9 +116,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <!-- Interial link stores the robot's inertial information -->
     <link name="inertial_link">
       <inertial>
-        <mass value="46.034"/>
-        <origin xyz="-0.00065 -0.085 0.062" />
-        <inertia ixx="0.6022" ixy="-0.02364" ixz="-0.1197" iyy="1.7386" iyz="-0.001544" izz="2.0296" />
+        <mass value="46.03"/>
+        <!--origin xyz="-0.00065 -0.085 0.062" /-->
+        <origin xyz="0 0 0" />
+        <!--inertia ixx="1.2022" ixy="-0.02364" ixz="-0.1197" iyy="1.4386" iyz="-0.001544" izz="5.3296" /-->
+        <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
       </inertial>
     </link>
 
@@ -108,7 +140,45 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     </joint>
     <gazebo reference="imu_link">
     </gazebo>
+ <!--
+  < Base Link >
+    <joint name="footprint1" type="fixed" >
+     <parent link="base_link" />
+      <child link="velo" />
 
+    </joint>
+    <link name="velo" >
+      <visual>
+        <geometry>
+          <box size="0.5 0.5 0.05" />
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.5 0.5 0.05" />
+        </geometry>
+      </collision>
+      <inertial>
+       <origin xyz="0 0 0"/>
+
+       <mass value="10"/>
+       <inertia ixx="3.0" ixy="0.0" ixz="0.0"
+               iyy="3.0" iyz="0.0" 
+               izz="3.0" />
+      </inertial>
+    </link>
+
+
+       <mass value="0.00001"/>
+       <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+               iyy="0.0001" iyz="0.0" 
+               izz="0.0001" />
+      </inertial>
+    </link>
+    <VLP-16 parent="velo" name="velodyne" topic="/velodyne_points" hz="10" samples="440">
+      <origin xyz="0.3 0 0.25" rpy="0 0 0" />
+    </VLP-16>
+-->
     <!-- Husky wheel macros -->
     <xacro:husky_wheel wheel_prefix="front_left">
       <origin xyz="${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
@@ -160,7 +230,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
         <origin xyz="-0.35 0 0.51" rpy="0 0 -3.14"/>
       </xacro:sensor_arch>
       <joint name="kinect_frame_joint" type="fixed">
-        <origin xyz="$(optenv HUSKY_KINECT_XYZ 0 0 0)" rpy="$(optenv HUSKY_KINECT_RPY 0 0.18 3.14)" />
+        <origin xyz="$(optenv HUSKY_KINECT_XYZ 0 0 0)" rpy="$(optenv HUSKY_KINECT_RPY 0 0.0 3.14)" />
         <parent link="sensor_arch_mount_link"/>
         <child link="camera_link"/>
       </joint>
@@ -168,6 +238,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
       <xacro:kinect_camera prefix="camera"/>
     </xacro:if>
 
+    <xacro:include filename="$(optenv HUSKY_URDF_EXTRAS empty.urdf)" />
   </xacro:macro>
-
 </robot>
