@@ -24,27 +24,27 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <robot name="husky_decorations" xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:property name="height_offset" value="0.1" />
+
   <xacro:macro name="husky_decorate">
-<!--
-    <Spawn Husky chassis >
+
+    <!-- Spawn Husky chassis -->
     <link name="top_chassis_link">
       <visual>
-        <origin xyz="0 0 ${height_offset}" rpy="0 0 0" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://husky_description/meshes/top_chassis.dae" />  
+          <mesh filename="package://husky_description/meshes/top_chassis.dae" />
         </geometry>
       </visual>
     </link>
 
-    <Attach chassis to the robot >
+    <!-- Attach chassis to the robot -->
     <joint name="top_chassis_joint" type="fixed">
       <parent link="base_link" />
       <child link="top_chassis_link" />
     </joint>
 
     <xacro:if value="$(optenv HUSKY_USER_RAIL_ENABLED true)">
-      <Spawn user rails >
+      <!-- Spawn user rails -->
       <link name="user_rail_link">
         <visual>
           <geometry>
@@ -53,14 +53,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
         </visual>
       </link>
 
-      <Attach user rails to base link >
+      <!-- Attach user rails to base link -->
       <joint name="user_rail" type="fixed">
-        <origin xyz="0.272 0 ${height_offset+0.245}" rpy="0 0 0" />
+        <origin xyz="0.272 0 0.245" rpy="0 0 0" />
         <parent link="base_link" />
         <child link="user_rail_link" />
       </joint>
     </xacro:if>
--->
+
     <xacro:if value="$(optenv HUSKY_FRONT_BUMPER_ENABLED true)">
       <!-- Spawn front bumper link -->
       <link name="front_bumper_link">
@@ -100,35 +100,24 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <xacro:if value="$(optenv HUSKY_TOP_PLATE_ENABLED true)">
       <!-- Spawn the top plate -->
       <link name="top_plate_link">
-<!--
-	<inertial>
-    		<origin rpy="-0.2 0 ${height_offset+0.25}" xyz="-0.2 0 0"/>
-    		<mass value="20.0"/>
-    		<inertia ixx="0.004878" ixy="-6.2341e-07" ixz="-7.4538e-07" iyy="0.00090164" iyz="-0.00014394" izz="0.0042946"/>
-  	</inertial>
         <visual>
-          <!origin xyz="-0.2 0 0" rpy="0 0 0"/>
-	  <origin xyz="-0.2 0 ${height_offset+0.25}" rpy="0 0 0"/>
+          <origin xyz="0 0 0" rpy="0 0 0" />
           <geometry>
-            <box size="0.52 0.41 0.5" rpy="0 0 0"/>
-            <!<mesh filename="package://husky_description/meshes/top_plate.dae" />
+            <mesh filename="package://husky_description/meshes/top_plate.dae" />
           </geometry>
         </visual>
         <collision>
-          <!origin xyz="-0.2 0 0" rpy="0 0 0"/>
-	  <origin xyz="-0.2 0 ${height_offset+0.25}" rpy="0 0 0"/>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <box size="0.52 0.41 0.5" rpy="0 0 0"/>
-            <!<mesh filename="package://husky_description/meshes/top_plate.dae" />
+            <mesh filename="package://husky_description/meshes/top_plate.dae" />
           </geometry>
         </collision>
         <collision>
-          <! Extra collision tag for widgets on top plate >
+          <!-- Extra collision tag for widgets on top plate -->
           <geometry>
             <box size="0.32 0.41 0.09" rpy="0 0 0"/>
           </geometry>
         </collision>
--->
       </link>
 
       <!-- Attach top plate -->
